@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">ecommerce</string>
+    <string name="str_app">App</string>
+    <string name="str_market">Market</string>
+    <string name="str_categories">Categorias</string>
+    <string name="str_offers">Ofertas</string>
+    <string name="str_for_you">Para tí</string>
+    <string name="str_loading">Cargando...</string>
+    <string name="str_cart">Carrito</string>
+    <string name="str_confirm_order">Confirmar orden</string>
+    <string name="str_price">Precio</string>
+    <string name="str_total_price">Precio total</string>
+    <string name="str_delivery">Envio</string>
+    <string name="str_delivery_cost">Costo de envio:</string>
+    <string name="str_free">GRATIS</string>
+    <string name="str_add_cart">Agregar a carrito</string>
+    <string name="str_add_cart_success">Tu producto se agregó al carrito</string>
+    <string name="str_l_free">FREE</string>
+</resources>
