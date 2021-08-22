@@ -8,7 +8,7 @@ class ProductsUseCase: UseCase<ProductsParameters, ProductsResult> {
 
     override suspend fun execute(params: ProductsParameters): ProductsResult = launch {
         delay(1000)
-        val (id, categoryId, offSale) = params
+        val (id, _, offSale) = params
         var products = Storage.products.asSequence()
         products = when(offSale) {
             true -> products.filter { it.discount > 0.0 }

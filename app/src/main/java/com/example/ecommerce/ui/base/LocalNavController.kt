@@ -2,9 +2,9 @@ package com.example.ecommerce.ui.base
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
-import androidx.navigation.NavController
+import com.example.ecommerce.ui.navigation.AppNavigation
 
-val LocalNavController = compositionLocalOf<NavController> { error("Empty!") }
+val LocalAppNavigation = compositionLocalOf<AppNavigation> { error("Empty!") }
 
 @Composable
-fun localNavController() = LocalNavController.current
+fun localAppNavigation() = LocalAppNavigation.current

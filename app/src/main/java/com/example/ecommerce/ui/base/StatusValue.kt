@@ -1,20 +1,20 @@
 package com.example.ecommerce.ui.base
 
-sealed class StatusValue<T>(initValue: T? = null) {
+sealed class StatusValue<T>(value: T) {
 
-    var value: T? = initValue
+    var value: T = value
 
     class Error<T>(
         val msg: String,
         val cause: Exception? = null,
-        initValue: T? = null
-    ): StatusValue<T>(initValue = initValue)
+        value: T
+    ): StatusValue<T>(value = value)
 
-    class Success<T>(initValue: T? = null): StatusValue<T>(initValue = initValue)
+    class Success<T>(value: T): StatusValue<T>(value = value)
 
-    class Loading<T>(initValue: T? = null): StatusValue<T>(initValue = initValue)
+    class Loading<T>(value: T): StatusValue<T>(value = value)
 
-    class LoadMore<T>(initValue: T? = null): StatusValue<T>(initValue = initValue)
+    class LoadMore<T>(value: T): StatusValue<T>(value = value)
 
     fun toError(
         msg: String,
@@ -24,14 +24,14 @@ sealed class StatusValue<T>(initValue: T? = null) {
         return StatusValue.Error(
             msg = msg,
             cause = cause,
-            initValue = newValue ?: value
+            value = newValue ?: value
         )
     }
 
-    fun toSuccess(newValue: T? = null): StatusValue.Success<T> = Success(newValue ?: value)
+    fun toSuccess(newValue: T): StatusValue.Success<T> = Success(newValue ?: value)
 
-    fun toLoading(newValue: T? = null): StatusValue.Loading<T> = Loading(newValue ?: value)
+    fun toLoading(newValue: T): StatusValue.Loading<T> = Loading(newValue ?: value)
 
-    fun toLoadMore(newValue: T? = null): StatusValue.LoadMore<T> = LoadMore(newValue ?: value)
+    fun toLoadMore(newValue: T): StatusValue.LoadMore<T> = LoadMore(newValue ?: value)
 
 }

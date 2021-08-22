@@ -53,7 +53,7 @@ internal fun ColumnScope.ShoppingCartList(viewModel: ShoppingCartViewModel) = wi
                 modifier = Modifier.padding(top = 24.dp)
             )
         }
-        items(model?.items?.value ?: listOf()) {
+        items(state.items.value) {
             Spacer(modifier = Modifier.height(12.dp))
             ShoppingCartItem(
                 checked = it.enabled,
@@ -98,17 +98,17 @@ internal fun ShoppingCartPrices(viewModel: ShoppingCartViewModel) = with(viewMod
         ) {
             ItemPrice(
                 title = stringResource(R.string.str_price),
-                price = model?.price ?: 0.0
+                price = state.price
             )
             MyDivider()
             ItemPrice(
                 title = stringResource(R.string.str_delivery),
-                price = model?.delivery ?: 0.0
+                price = state.delivery
             )
             MyDivider()
             ItemPrice(
                 title = stringResource(R.string.str_total_price),
-                price = model?.totalPrice ?: 0.0,
+                price = state.totalPrice,
                 big = true
             )
             Button(

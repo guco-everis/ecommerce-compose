@@ -7,13 +7,13 @@ import com.example.ecommerce.domain.use_cases.cart.CartParameters
 import com.example.ecommerce.domain.use_cases.cart.CartResult
 import com.example.ecommerce.domain.use_cases.cart.CartUseCase
 import com.example.ecommerce.ui.base.ScreenViewModel
-import com.example.ecommerce.ui.shopping_cart.models.ShoppingScreenCartModel
+import com.example.ecommerce.ui.shopping_cart.state.ShoppingCartState
 
 class ShoppingCartViewModel(
     private val actionCartUseCase: ActionCartUseCase,
     private val cartUseCase: CartUseCase
-): ScreenViewModel<ShoppingScreenCartModel, ShoppingCartEvent>(
-    initModel = ShoppingScreenCartModel()
+): ScreenViewModel<ShoppingCartState, ShoppingCartEvent>(
+    state = ShoppingCartState()
 ) {
 
     init {
@@ -23,44 +23,55 @@ class ShoppingCartViewModel(
     fun updateCart() = launch {
         when(val result = cartUseCase.execute(CartParameters())){
             is CartResult.Success -> {
-                model?.items = model?.items?.toSuccess(newValue = result.items)
+                setState {
+                    items = items.toSuccess(
+                        newValue = result.items
+                    )
+                }
             }
             is CartResult.Error -> {
-                model?.items = model?.items?.toError(msg = "Error")
+                setState {
+                    items = items.toError(
+                        msg = "Error"
+                    )
+                }
             }
         }
-        updateModel()
     }
 
     fun plusProduct(id: String) = launch {
         val result = actionCartUseCase.execute(ActionCartParameters.Plus(productId = id))
         if(result is ActionCartResult.Success){
-            model?.itemPlus(id)
-            updateModel()
+            setState {
+                itemPlus(id)
+            }
         }
     }
 
     fun minusProduct(id: String) = launch {
         val result = actionCartUseCase.execute(ActionCartParameters.Minus(productId = id))
         if(result is ActionCartResult.Success){
-            model?.itemMinus(id)
-            updateModel()
+            setState {
+                itemMinus(id)
+            }
         }
     }
 
     fun deleteProduct(id: String) = launch {
         val result = actionCartUseCase.execute(ActionCartParameters.Delete(productId = id))
         if(result is ActionCartResult.Success){
-            model?.itemDelete(id)
-            updateModel()
+            setState {
+                itemDelete(id)
+            }
         }
     }
 
     fun enabledProduct(id: String, enabled: Boolean) = launch {
         val result = actionCartUseCase.execute(ActionCartParameters.Enabled(productId = id, enabled = enabled))
         if(result is ActionCartResult.Success){
-            model?.itemEnabled(id, enabled)
-            updateModel()
+            setState {
+                itemEnabled(id, enabled)
+            }
         }
     }
 }

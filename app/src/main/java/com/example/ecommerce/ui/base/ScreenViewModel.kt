@@ -11,19 +11,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
 import java.lang.Exception
-import com.example.ecommerce.ui.base.Model as IModel
+import com.example.ecommerce.ui.base.State as IState
 import com.example.ecommerce.ui.base.Event as IEvent
 
-abstract class ScreenViewModel<Model: IModel, Event: IEvent>(
-    initModel: Model? = null,
-    initEvent: Event? = null
+abstract class ScreenViewModel<State: IState, Event: IEvent>(
+    state: State,
+    event: Event? = null
 ): ViewModel() {
 
     var loading by mutableStateOf(false)
         protected set
 
-    var model by mutableStateOf<Model?>(
-        value = initModel,
+    var state by mutableStateOf(
+        value = state,
         policy = neverEqualPolicy()
     )
         protected set
@@ -51,10 +51,6 @@ abstract class ScreenViewModel<Model: IModel, Event: IEvent>(
         this.listener = listener
     }
 
-    fun updateModel(){
-        model = model
-    }
-
     fun launch(block: suspend CoroutineScope.() -> Unit){
         viewModelScope.launch(
             context = NonCancellable,
@@ -62,7 +58,13 @@ abstract class ScreenViewModel<Model: IModel, Event: IEvent>(
         )
     }
 
-    init {
-        event = initEvent
+    fun setState(reduce: State.()-> Unit){
+        state.reduce()
+        state = state
     }
+
+    init {
+        this.event = event
+    }
+
 }

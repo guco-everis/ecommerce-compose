@@ -1,5 +1,6 @@
 package com.example.ecommerce.components
 
+import android.util.Log
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -124,7 +125,6 @@ internal fun DiscountFlag(price: Double, discount: Double){
     var targetValue by remember {
         mutableStateOf(0.8f)
     }
-    // 0.8f - 1.0f
     val duration = 700L
     val scale by animateFloatAsState(
         targetValue,

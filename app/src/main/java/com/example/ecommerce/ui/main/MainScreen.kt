@@ -12,42 +12,26 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import com.example.ecommerce.ui.base.Route
-import com.example.ecommerce.ui.home.HomeScreen
-import com.example.ecommerce.ui.shopping_cart.ShoppingCartScreen
+import com.example.ecommerce.ui.base.rememberNavigationGraph
+import com.example.ecommerce.ui.main.navigation.MainNavigation
 
 @Composable
 fun MainScreen(){
-    val navHostController = rememberNavController()
+    val navigation = rememberNavigationGraph {
+        MainNavigation(it)
+    }
     Scaffold (
         backgroundColor = MaterialTheme.colors.primary,
         bottomBar = {
-            HomeBottomAppBar(navHostController)
+            HomeBottomAppBar(navigation)
         }
     ) {
-        NavHost(
-            navController = navHostController,
-            startDestination = Screen.Home.route
-        ){
-            composable(Route.HOME){
-                HomeScreen()
-            }
-            composable(Route.SHOPPING_CART){
-                ShoppingCartScreen()
-            }
-        }
+        navigation.Build()
     }
 }
 
 @Composable
-fun HomeBottomAppBar(navHostController: NavHostController) {
+fun HomeBottomAppBar(navigation: MainNavigation) {
     BottomNavigation(
         backgroundColor = Color.White,
         modifier = Modifier.drawTopLine(
@@ -55,20 +39,14 @@ fun HomeBottomAppBar(navHostController: NavHostController) {
             color = Color.LightGray.copy(alpha = 0.3f)
         ),
     ) {
-        val navBackStackEntry by navHostController.currentBackStackEntryAsState()
-        val currentDestination = navBackStackEntry?.destination?.hierarchy
+        val currentDestination by navigation.currentDestinationAsState()
         items.forEach { screen ->
             BottomNavigationItem(
-                selected = currentDestination?.any { it.route == screen.route } == true,
+                selected = currentDestination.compareRoute(screen.route),
                 onClick = {
-                    navHostController.navigate(screen.route) {
-                        popUpTo(navHostController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        // evitar copias del mismo destino
-                        launchSingleTop = true
-                        // Restaurar el estado de un elemento preseleccionado
-                        restoreState = true
+                    when(screen.route){
+                        MainNavigation.HOME -> navigation.navigateToHome()
+                        MainNavigation.SHOPPING_CART -> navigation.navigateToShoppingCart()
                     }
                 },
                 icon = {
@@ -88,13 +66,13 @@ private sealed class Screen(
         icon = {
             Icon(Icons.Outlined.Home, contentDescription = null)
         },
-        route = Route.HOME
+        route = MainNavigation.HOME
     )
     object ShoppingCart: Screen(
         icon = {
             Icon(Icons.Outlined.ShoppingCart, contentDescription = null)
         },
-        route = Route.SHOPPING_CART
+        route = MainNavigation.SHOPPING_CART
     )
 }
 

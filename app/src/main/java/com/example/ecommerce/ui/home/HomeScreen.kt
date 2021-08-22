@@ -60,12 +60,8 @@ internal fun HomeTopAppBar(){
 
 @Composable
 fun HomeBody(viewModel: HomeViewModel) {
-    val navController = localNavController()
     val numberOfItemsByRow = LocalConfiguration.current.screenWidthDp / 200
     val shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
-    val goToProduct = { id: String ->
-        navController.navigate(Route.PRODUCT.setValue("productId", id))
-    }
     LazyColumn(
         modifier = Modifier
             .background(
@@ -80,13 +76,11 @@ fun HomeBody(viewModel: HomeViewModel) {
             viewModel = viewModel
         )
         productsOffSaleBlock(
-            viewModel = viewModel,
-            goToProduct = goToProduct
+            viewModel = viewModel
         )
         productsBlock(
             viewModel = viewModel,
-            numberOfItemsByRow = numberOfItemsByRow,
-            goToProduct = goToProduct
+            numberOfItemsByRow = numberOfItemsByRow
         )
     }
 }
@@ -103,7 +97,7 @@ internal fun LazyListScope.categoryBlock(viewModel: HomeViewModel) = with(viewMo
             )
         )
     }
-    when(model?.categories){
+    when(state.categories){
         is StatusValue.Loading -> {
             item {
                 Box(
@@ -121,7 +115,7 @@ internal fun LazyListScope.categoryBlock(viewModel: HomeViewModel) = with(viewMo
                 LazyRow(
                     contentPadding = PaddingValues(vertical = 16.dp)
                 ) {
-                    items(model?.categories?.value ?: listOf()){
+                    items(state.categories.value){
                         Spacer(modifier = Modifier.width(16.dp))
                         ImageButton(
                             image = it.image,
@@ -144,8 +138,7 @@ internal fun LazyListScope.categoryBlock(viewModel: HomeViewModel) = with(viewMo
 }
 
 internal fun LazyListScope.productsOffSaleBlock(
-    viewModel: HomeViewModel,
-    goToProduct: (id: String) -> Unit
+    viewModel: HomeViewModel
 ) = with(viewModel){
     item {
         Text(
@@ -157,7 +150,8 @@ internal fun LazyListScope.productsOffSaleBlock(
         )
     }
     item {
-        when(val status = model?.productsOffSale) {
+        val navigation = localAppNavigation()
+        when(val status = state.productsOffSale) {
             is StatusValue.Loading -> {
                 Box(
                     modifier = Modifier
@@ -172,7 +166,7 @@ internal fun LazyListScope.productsOffSaleBlock(
                 LazyRow(
                     contentPadding = PaddingValues(vertical = 16.dp)
                 ) {
-                    items(status.value ?: listOf()){
+                    items(status.value){
                         Spacer(modifier = Modifier.width(12.dp))
                         ProductCard(
                             image = it.image,
@@ -180,7 +174,9 @@ internal fun LazyListScope.productsOffSaleBlock(
                             price = it.price,
                             discount = it.discount,
                             onClick = {
-                                goToProduct(it.id)
+                                navigation.navigateToProduct(
+                                    productId = it.id
+                                )
                             },
                             modifier = Modifier
                                 .wrapContentHeight()
@@ -203,8 +199,7 @@ internal fun LazyListScope.productsOffSaleBlock(
 
 internal fun LazyListScope.productsBlock(
     viewModel: HomeViewModel,
-    numberOfItemsByRow: Int,
-    goToProduct: (id: String) -> Unit
+    numberOfItemsByRow: Int
 ) = with(viewModel){
     item {
         Text(
@@ -215,7 +210,7 @@ internal fun LazyListScope.productsBlock(
             )
         )
     }
-    when(val status = model?.products){
+    when(val status = state.products){
         is StatusValue.Loading -> {
             item {
                 Box(
@@ -229,7 +224,8 @@ internal fun LazyListScope.productsBlock(
             }
         }
         is StatusValue.Success -> {
-            items(items = status.value?.chunked(numberOfItemsByRow) ?: listOf()) { rowItems ->
+            items(items = status.value.chunked(numberOfItemsByRow)) { rowItems ->
+                val navigation = localAppNavigation()
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(14.dp),
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
@@ -241,7 +237,7 @@ internal fun LazyListScope.productsBlock(
                             price = product.price,
                             discount = product.discount,
                             onClick = {
-                                goToProduct(product.id)
+                                navigation.navigateToProduct(product.id)
                             },
                             modifier = Modifier.weight(1f),
                             points = product.points,
