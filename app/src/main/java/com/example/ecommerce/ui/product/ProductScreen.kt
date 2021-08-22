@@ -17,7 +17,7 @@ import coil.compose.rememberImagePainter
 import com.example.ecommerce.R
 import com.example.ecommerce.components.ShoppingCartActions
 import com.example.ecommerce.ui.base.StatusValue
-import com.example.ecommerce.ui.base.localUpdateCart
+import com.example.ecommerce.ui.base.UpdateCart
 import com.example.ecommerce.ui.theme.Delivery
 import com.example.ecommerce.utils.format
 import org.koin.androidx.compose.getViewModel
@@ -32,7 +32,6 @@ fun ProductScreen(productId: String) = with(getViewModel<ProductViewModel>(
     parameters = { parametersOf(productId) }
 )){
     var snackBarVisible by remember { mutableStateOf(false) }
-    val updateCart = localUpdateCart()
     Surface {
         Box {
             Column(
@@ -158,7 +157,7 @@ fun ProductScreen(productId: String) = with(getViewModel<ProductViewModel>(
     onEvent {
         when(it){
             is ProductEvent.UpdateCart -> {
-                updateCart.value()
+                UpdateCart.execute()
                 snackBarVisible = true
                 withContext(Dispatchers.IO){ delay(4000) }
                 snackBarVisible = false

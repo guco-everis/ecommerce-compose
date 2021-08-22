@@ -20,7 +20,6 @@ abstract class ScreenViewModel<State: IState, Event: IEvent>(
 ): ViewModel() {
 
     var loading by mutableStateOf(false)
-        protected set
 
     var state by mutableStateOf(
         value = state,

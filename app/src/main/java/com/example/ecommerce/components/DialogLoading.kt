@@ -18,8 +18,8 @@ import androidx.compose.ui.window.Dialog
 import com.example.ecommerce.R
 
 @Composable
-fun DialogLoading(){
-    Dialog(onDismissRequest = {  }) {
+fun DialogLoading(onDismissRequest: () -> Unit = {}){
+    Dialog(onDismissRequest = onDismissRequest) {
         Card(
             backgroundColor = Color.White,
             shape = RoundedCornerShape(24.dp)

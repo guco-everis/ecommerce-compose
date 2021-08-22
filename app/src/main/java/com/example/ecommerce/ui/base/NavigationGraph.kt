@@ -2,40 +2,12 @@ package com.example.ecommerce.ui.base
 
 import androidx.compose.runtime.*
 import androidx.compose.runtime.State
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.*
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.*
-import androidx.navigation.NavGraphBuilder
+
 
 abstract class NavigationGraph(protected val navHostController: NavHostController) {
-
-    @OptIn(ExperimentalComposeUiApi::class)
-    protected fun NavGraphBuilder.fullScreenDialog(
-        route: String,
-        arguments: List<NamedNavArgument> = emptyList(),
-        deepLinks: List<NavDeepLink> = emptyList(),
-        content: @Composable (NavBackStackEntry) -> Unit
-    ) {
-        addDestination(
-            DialogNavigator.Destination(
-                provider[DialogNavigator::class],
-                DialogProperties(
-                    usePlatformDefaultWidth = false
-                ),
-                content
-            ).apply {
-                this.route = route
-                arguments.forEach { (argumentName, argument) ->
-                    addArgument(argumentName, argument)
-                }
-                deepLinks.forEach { deepLink ->
-                    addDeepLink(deepLink)
-                }
-            }
-        )
-    }
 
     fun String.setValue(id: String, value: String): String {
         return this.replace("{$id}", value)

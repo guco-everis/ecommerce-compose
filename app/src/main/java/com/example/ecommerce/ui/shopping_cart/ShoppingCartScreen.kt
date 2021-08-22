@@ -7,7 +7,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -16,17 +15,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ecommerce.R
+import com.example.ecommerce.components.DialogLoading
 import com.example.ecommerce.components.ShoppingCartItem
-import com.example.ecommerce.ui.base.LocalUpdateCart
 import com.example.ecommerce.ui.theme.EcommerceTheme
 import com.example.ecommerce.utils.format
 import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun ShoppingCartScreen() = with(getViewModel<ShoppingCartViewModel>()) {
-    val updateCart = LocalUpdateCart.current
-    LaunchedEffect(true){
-        updateCart.value = this@with::updateCart
+    if(loading){
+        DialogLoading(
+            onDismissRequest = {
+                loading = false
+            }
+        )
     }
     Column(
         modifier = Modifier
@@ -112,7 +114,9 @@ internal fun ShoppingCartPrices(viewModel: ShoppingCartViewModel) = with(viewMod
                 big = true
             )
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+                    loading = true
+                },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
                 contentPadding = PaddingValues(16.dp)

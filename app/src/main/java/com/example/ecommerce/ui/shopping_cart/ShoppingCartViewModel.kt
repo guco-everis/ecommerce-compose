@@ -7,6 +7,7 @@ import com.example.ecommerce.domain.use_cases.cart.CartParameters
 import com.example.ecommerce.domain.use_cases.cart.CartResult
 import com.example.ecommerce.domain.use_cases.cart.CartUseCase
 import com.example.ecommerce.ui.base.ScreenViewModel
+import com.example.ecommerce.ui.base.UpdateCart
 import com.example.ecommerce.ui.shopping_cart.state.ShoppingCartState
 
 class ShoppingCartViewModel(
@@ -17,10 +18,11 @@ class ShoppingCartViewModel(
 ) {
 
     init {
+        UpdateCart.addListener(::updateCart)
         updateCart()
     }
 
-    fun updateCart() = launch {
+    private fun updateCart() = launch {
         when(val result = cartUseCase.execute(CartParameters())){
             is CartResult.Success -> {
                 setState {
@@ -73,5 +75,10 @@ class ShoppingCartViewModel(
                 itemEnabled(id, enabled)
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        UpdateCart.removeListener(::updateCart)
     }
 }
