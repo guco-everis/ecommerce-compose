@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -14,12 +15,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.ecommerce.R
 import com.example.ecommerce.components.DialogLoading
 import com.example.ecommerce.components.ShoppingCartItem
+import com.example.ecommerce.ui.base.StatusValue
 import com.example.ecommerce.ui.theme.EcommerceTheme
 import com.example.ecommerce.utils.format
 import org.koin.androidx.compose.getViewModel
+import androidx.compose.runtime.getValue
+import com.airbnb.lottie.compose.LottieConstants
 
 @Composable
 fun ShoppingCartScreen() = with(getViewModel<ShoppingCartViewModel>()) {
@@ -30,14 +37,63 @@ fun ShoppingCartScreen() = with(getViewModel<ShoppingCartViewModel>()) {
             }
         )
     }
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .background(color = Color.White)
-    ) {
-        ShoppingCartList(this@with)
-        ShoppingCartPrices(this@with)
+    Surface {
+        when(state.items){
+            is StatusValue.Loading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(),
+                    contentAlignment = Alignment.Center
+                ){
+                    CircularProgressIndicator()
+                }
+            }
+            is StatusValue.Success -> {
+                if(state.items.value.isEmpty()){
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        val lottieComposition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.empty_box))
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            LottieAnimation(
+                                composition = lottieComposition,
+                                modifier = Modifier
+                                    .width(180.dp)
+                                    .height(180.dp),
+                                iterations = LottieConstants.IterateForever
+                            )
+                            Text(
+                                text = stringResource(id = R.string.str_empty_cart),
+                                style = MaterialTheme.typography.h4,
+                                color = Color.Black
+                            )
+                        }
+                    }
+                } else {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight()
+                            .background(color = Color.White)
+                    ) {
+                        ShoppingCartList(this@with)
+                        ShoppingCartPrices(this@with)
+                    }
+                }
+            }
+            is StatusValue.LoadMore -> {
+
+            }
+            is StatusValue.Error -> {
+
+            }
+        }
     }
 }
 

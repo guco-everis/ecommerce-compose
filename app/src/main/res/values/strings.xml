@@ -16,4 +16,5 @@
     <string name="str_add_cart">Agregar a carrito</string>
     <string name="str_add_cart_success">Tu producto se agregó al carrito</string>
     <string name="str_l_free">FREE</string>
+    <string name="str_empty_cart">Carrito vacío</string>
 </resources>
